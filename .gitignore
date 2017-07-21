@@ -1,0 +1,6 @@
+##this is the gitignore file which indicates files(format) which should not be added into git reporsitory
+
+# meta data of files
+*.meta
+
+# to be added
