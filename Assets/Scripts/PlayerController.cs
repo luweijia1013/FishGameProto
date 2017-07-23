@@ -7,21 +7,29 @@ public class PlayerController : MonoBehaviour {
 
     private GameObject fish;
     private GameObject bubble;
+    private Animator fish_animator;
     [Tooltip("The speed of the fish(Reserved for adjusting)")]
     public float forward_speed;
     [Tooltip("The speed of the fish's rotation(Reserved for adjusting)")]
     public float rotate_speed;
     public Canvas[] canvases;
+    public GameObject hp_prefab;
+    [HideInInspector]
+    public float oxygen;
+    [HideInInspector]
+    public float oxygen_attack;
+    [HideInInspector]
+    public float oxygen_beinfluenced;
 
     private MotionBlurEffect[] blurcontroller;
     private bool speed_up;
     private bool is_move;
-    private float oxygen;
 
     // Use this for initialization
     void Start () {
         fish = this.transform.Find("Fish").gameObject;
         bubble = this.transform.Find("Bubble").gameObject;
+        fish_animator = this.GetComponentInChildren<Animator>();
 
         blurcontroller = this.GetComponentsInChildren<MotionBlurEffect>();
         for (var i = 0; i < blurcontroller.Length; i++)
@@ -31,6 +39,8 @@ public class PlayerController : MonoBehaviour {
 
         speed_up = false;
         oxygen = 100;
+        oxygen_attack = 0;
+        oxygen_beinfluenced = 0;
     }
 
     // Update is called once per frame
@@ -46,6 +56,7 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKey("w"))
         {
             is_move = true;
+            fish_animator.SetBool("is_move", true);
             MoveForward();
         }
         else
@@ -55,22 +66,29 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetAxis("Horizontal") != 0)
         {
             //The degree of the rotation
+            fish_animator.SetBool("is_move", true);
             float hor = Input.GetAxis("Horizontal");
             MoveRotate(hor);
+        }
+        if (!Input.GetKey("w") && Input.GetAxis("Horizontal") == 0)
+        {
+            fish_animator.SetBool("is_move", false);
         }
         if (Input.GetKey("j") && is_move)
         { 
             speed_up = true;
+            fish_animator.SetFloat("speed_boast", 1.5f);
             SpeedUpBlur();
         }
         else
         {
             speed_up = false;
+            fish_animator.SetFloat("speed_boast", 1.0f);
             SpeedDownBlur();
         }
 
         //oxygen lost by time
-        OxygenCost();
+        OxygenCal();
     }
 
     void LateUpdate()
@@ -87,11 +105,21 @@ public class PlayerController : MonoBehaviour {
                 text.text = "No Oxygen!";
                 this.transform.GetComponent<PlayerController>().enabled = false;
             }
+            if (oxygen > 100)
+            {
+                oxygen = 100;
+            }
             if (oxygen < 20)
             {
                 text.color = Color.red;
             }
+            else
+            {
+                text.color = Color.black;
+            }
         }
+        oxygen_attack = 0;
+        //oxygen_beinfluenced = 0;
     }
 
     /**
@@ -101,10 +129,9 @@ public class PlayerController : MonoBehaviour {
     {
         ParticleSystem bubble_particle = bubble.transform.GetComponent<ParticleSystem>();
         bool bubble_is_play = bubble_particle.IsAlive();
-        //Debug.Log(bubble_is_play + "" + Time.time);
         if (!bubble_is_play)
         {
-            oxygen -= 5;
+            oxygen_attack -= 5;
             bubble_particle.Play();
         }
     }
@@ -150,9 +177,25 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    void OxygenCost()
+    void OxygenCal()
     {
-        var oxygen_cost = speed_up ? 2 : 1;
+        var oxygen_cost = speed_up ? 3 : 1;
         oxygen = oxygen - oxygen_cost * Time.deltaTime;
+        if (oxygen_attack != 0)
+        {
+            oxygen += oxygen_attack;
+            GameObject hp = (GameObject)Instantiate(hp_prefab, new Vector3(0, 5, 0) + this.transform.Find("Fish").position, new Quaternion());
+            hp.GetComponent<AlwaysFace>().Target = this.transform.Find("Fish").gameObject;
+            hp.GetComponentInChildren<TextMesh>().text = (oxygen_attack > 0 ? ("+" + oxygen_attack.ToString()) : oxygen_attack.ToString());
+            oxygen_attack = 0;
+        }
+        if (oxygen_beinfluenced != 0)
+        {
+            oxygen += oxygen_beinfluenced;
+            GameObject hp = (GameObject)Instantiate(hp_prefab, new Vector3(0, 10, 0) + this.transform.Find("Fish").position, new Quaternion());
+            hp.GetComponent<AlwaysFace>().Target = this.transform.Find("Fish").gameObject;
+            hp.GetComponentInChildren<TextMesh>().text = (oxygen_beinfluenced > 0 ? ("+" + oxygen_beinfluenced.ToString()) : oxygen_beinfluenced.ToString());
+            oxygen_beinfluenced = 0;
+        }
     }
 }

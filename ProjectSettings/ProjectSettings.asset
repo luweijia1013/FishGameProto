@@ -10,7 +10,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: Giant
   productName: FishGameProto
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -466,7 +466,7 @@ PlayerSettings:
     Collab: 0
     ErrorHub: 0
     Hub: 0
-    UNet: 1
+    UNet: 0
   cloudProjectId: b167f92b-7ab2-430a-8b9d-ca62215529be
   projectName: FishGameProto
   organizationId: ztgame_luweijia
