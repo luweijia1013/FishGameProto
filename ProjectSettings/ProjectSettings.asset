@@ -119,7 +119,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleIdentifier: com.Company.ProductName
+  bundleIdentifier: com.Giant.FishGameProto
   bundleVersion: 1.0
   preloadedAssets: []
   metroInputSource: 0
@@ -466,7 +466,7 @@ PlayerSettings:
     Collab: 0
     ErrorHub: 0
     Hub: 0
-    UNet: 0
+    UNet: 1
   cloudProjectId: b167f92b-7ab2-430a-8b9d-ca62215529be
   projectName: FishGameProto
   organizationId: ztgame_luweijia

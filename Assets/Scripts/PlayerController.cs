@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+        Debug.Log(this.transform.eulerAngles);
         if (Input.GetKeyDown("space"))
         {
             if (speed_up)
